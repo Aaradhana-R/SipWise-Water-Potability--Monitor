@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SipWise - Water Quality Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="water-bg">
+
+<header>
+    <h1>SipWise - Water Potability Detector</h1>
+</header>
+
+<!-- Form Card -->
+<div class="form-card">
+    <form method="POST" action="{{ url_for('index') }}">
+        <div><label for="ph">pH:</label><input type="text" id="ph" name="ph"></div>
+        <div><label for="hardness">Hardness:</label><input type="text" id="hardness" name="hardness"></div>
+        <div><label for="solids">Solids:</label><input type="text" id="solids" name="solids"></div>
+        <div><label for="chloramines">Chloramines:</label><input type="text" id="chloramines" name="chloramines"></div>
+        <div><label for="sulfate">Sulfate:</label><input type="text" id="sulfate" name="sulfate"></div>
+        <div><label for="conductivity">Conductivity:</label><input type="text" id="conductivity" name="conductivity"></div>
+        <div><label for="organicCarbon">Organic Carbon:</label><input type="text" id="organicCarbon" name="organicCarbon"></div>
+        <div><label for="trihalomethanes">Trihalomethanes:</label><input type="text" id="trihalomethanes" name="trihalomethanes"></div>
+        <div><label for="turbidity">Turbidity:</label><input type="text" id="turbidity" name="turbidity"></div>
+        <button type="submit">Predict</button>
+    </form>
+</div>
+
+<!-- Result Card -->
+{% if prediction is not none %}
+<div class="result-card {% if prediction|lower == 'safe' %}safe{% else %}unsafe{% endif %}">
+    Water Quality: {{ prediction|upper }}
+</div>
+{% else %}
+<div class="result-card neutral">
+    Enter water parameters above to see the result.
+</div>
+{% endif %}
+
+<footer>
+    <p>© 2025 SipWise | All rights reserved</p>
+</footer>
+
+</body>
+</html>

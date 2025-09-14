@@ -1,13 +1,19 @@
 import streamlit as st
 import pickle
 import numpy as np
+import os
 
 # -----------------------
-# Load your trained model
+# Load your trained SVM model safely
 # -----------------------
-# Make sure your model file (e.g., 'model.pkl') is in the repo
-with open("model.pkl", "rb") as f:
-    model = pickle.load(f)
+current_dir = os.path.dirname(__file__)
+model_path = os.path.join(current_dir, "svm.pkl")  # Updated filename
+
+try:
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
+except FileNotFoundError:
+    st.error("❌ svm.pkl not found! Please make sure it is in the same folder as this script.")
 
 # -----------------------
 # Streamlit App
@@ -34,15 +40,18 @@ turbidity = st.number_input("Turbidity", min_value=0.0, value=3.0)
 # Prediction Button
 # -----------------------
 if st.button("Check Potability"):
-    input_features = np.array([[ph, hardness, solids, chloramines, sulfate, conductivity,
-                                organic_carbon, trihalomethanes, turbidity]])
-    
-    prediction = model.predict(input_features)
-    
-    if prediction[0] == 1:
-        st.success("✅ Water is Safe to Drink!")
+    if 'model' in locals():
+        input_features = np.array([[ph, hardness, solids, chloramines, sulfate, conductivity,
+                                    organic_carbon, trihalomethanes, turbidity]])
+        
+        prediction = model.predict(input_features)
+        
+        if prediction[0] == 1:
+            st.success("✅ Water is Safe to Drink!")
+        else:
+            st.error("⚠️ Water is Unsafe!")
     else:
-        st.error("⚠️ Water is Unsafe!")
+        st.warning("⚠️ Model not loaded. Cannot make predictions.")
 
 # -----------------------
 # Optional: Show raw inputs

@@ -2,7 +2,9 @@ from flask import Flask, render_template, request
 import joblib
 import os
 
-app = Flask(__name__)
+# Set template folder explicitly
+template_dir = os.path.abspath('./templates')
+app = Flask(__name__, template_folder=template_dir)
 
 # Load model + scaler
 try:
@@ -12,10 +14,8 @@ try:
 except Exception as e:
     print(f"❌ Error loading model: {e}")
 
-class_mapping = {
-    model.classes_[1]: "Safe",
-    model.classes_[0]: "UnSafe"
-}
+# ... rest of your code
+
 
 # HOME PAGE
 @app.route('/')

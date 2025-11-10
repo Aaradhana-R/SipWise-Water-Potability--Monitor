@@ -2,45 +2,416 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SipWise - Water Quality Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipWise - Home</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a2540 0%, #0f3460 50%, #0a2540 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating trees/emojis at top */
+        .top-emojis {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 40px;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .top-emojis span {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .top-emojis span:nth-child(1) { animation-delay: 0s; }
+        .top-emojis span:nth-child(2) { animation-delay: 0.5s; }
+        .top-emojis span:nth-child(3) { animation-delay: 1s; }
+        .top-emojis span:nth-child(4) { animation-delay: 1.5s; }
+        .top-emojis span:nth-child(5) { animation-delay: 2s; }
+        .top-emojis span:nth-child(6) { animation-delay: 2.5s; }
+        .top-emojis span:nth-child(7) { animation-delay: 3s; }
+        .top-emojis span:nth-child(8) { animation-delay: 3.5s; }
+        .top-emojis span:nth-child(9) { animation-delay: 4s; }
+
+        /* Header */
+        header {
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+            margin-top: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .logo-icon {
+            font-size: 36px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d4ff;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            color: #0a2540;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .start-btn:hover {
+            background: #00ff88;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50px 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 0 auto 50px;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            color: #0a2540;
+            padding: 16px 45px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 80px;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #00d4ff;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 100px;
+            padding: 50px 30px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 15px;
+        }
+
+        .footer-text a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        .bottom-emojis {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            font-size: 35px;
+            opacity: 0.15;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bottom-emojis span {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .bottom-emojis span:nth-child(1) { animation-delay: 0s; }
+        .bottom-emojis span:nth-child(2) { animation-delay: 0.5s; }
+        .bottom-emojis span:nth-child(3) { animation-delay: 1s; }
+        .bottom-emojis span:nth-child(4) { animation-delay: 1.5s; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 42px; }
+            .subtitle { font-size: 16px; }
+            header { padding: 20px 25px; flex-direction: column; gap: 20px; }
+            .nav-links { flex-direction: column; width: 100%; }
+            .nav-link, .start-btn { width: 100%; text-align: center; }
+            .features { margin-top: 50px; }
+            footer { padding: 30px 20px; }
+        }
+    </style>
 </head>
-<body class="water-bg">
+<body>
+    <!-- Top floating emojis/trees -->
+    <div class="top-emojis">
+        <span>🌲</span>
+        <span>🌳</span>
+        <span>🌴</span>
+        <span>🌲</span>
+        <span>🌳</span>
+        <span>🌲</span>
+        <span>🌳</span>
+        <span>🌲</span>
+        <span>🌳</span>
+    </div>
 
-<header>
-    <h1>SipWise - Water Potability Detector</h1>
-</header>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span class="logo-icon">💧</span>
+            <span class="logo-text">SipWise</span>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="/predict" class="start-btn">Start Testing</a>
+        </div>
+    </header>
 
-<!-- Form Card -->
-<div class="form-card">
-    <form method="POST" action="{{ url_for('index') }}">
-        <div><label for="ph">pH:</label><input type="text" id="ph" name="ph"></div>
-        <div><label for="hardness">Hardness:</label><input type="text" id="hardness" name="hardness"></div>
-        <div><label for="solids">Solids:</label><input type="text" id="solids" name="solids"></div>
-        <div><label for="chloramines">Chloramines:</label><input type="text" id="chloramines" name="chloramines"></div>
-        <div><label for="sulfate">Sulfate:</label><input type="text" id="sulfate" name="sulfate"></div>
-        <div><label for="conductivity">Conductivity:</label><input type="text" id="conductivity" name="conductivity"></div>
-        <div><label for="organicCarbon">Organic Carbon:</label><input type="text" id="organicCarbon" name="organicCarbon"></div>
-        <div><label for="trihalomethanes">Trihalomethanes:</label><input type="text" id="trihalomethanes" name="trihalomethanes"></div>
-        <div><label for="turbidity">Turbidity:</label><input type="text" id="turbidity" name="turbidity"></div>
-        <button type="submit">Predict</button>
-    </form>
-</div>
+    <!-- Hero Section -->
+    <main class="hero">
+        <h1>
+            Test Water Purity<br>
+            with <span class="gradient-text">SipWise!</span>
+        </h1>
+        
+        <p class="subtitle">
+            🌍 AI-powered water quality prediction system. Analyze pH, hardness, solids, and 6 other chemical parameters—instantly know if your water is safe to drink. Advanced machine learning for sustainable health monitoring.
+        </p>
 
-<!-- Result Card -->
-{% if prediction is not none %}
-<div class="result-card {% if prediction|lower == 'safe' %}safe{% else %}unsafe{% endif %}">
-    Water Quality: {{ prediction|upper }}
-</div>
-{% else %}
-<div class="result-card neutral">
-    Enter water parameters above to see the result.
-</div>
-{% endif %}
+        <a href="/predict" class="cta-button">🔍 Start Water Analysis →</a>
 
-<footer>
-    <p>© 2025 SipWise | All rights reserved</p>
-</footer>
+        <!-- Features Grid -->
+        <div class="features" id="features">
+            <div class="feature-card">
+                <span class="feature-icon">🧪</span>
+                <div class="feature-title">9 Parameters</div>
+                <div class="feature-text">Comprehensive analysis of pH, hardness, solids, chloramines, sulfate, conductivity, organic carbon, trihalomethanes, and turbidity</div>
+            </div>
 
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <div class="feature-title">Instant Results</div>
+                <div class="feature-text">Get real-time predictions with confidence scores to understand model certainty</div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <div class="feature-title">AI-Powered</div>
+                <div class="feature-text">Support Vector Machine (SVM) model trained on 3,276 water samples for accurate predictions</div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <div class="feature-title">Data-Driven</div>
+                <div class="feature-text">Advanced exploratory data analysis and feature engineering for reliable predictions</div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🌍</span>
+                <div class="feature-title">Global Impact</div>
+                <div class="feature-text">Contributing to SDG 6: Clean Water and Sanitation for sustainable development</div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">✅</span>
+                <div class="feature-title">Reliable</div>
+                <div class="feature-text">Validated model with advanced precision-recall optimization for water safety</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-title">© 2025 SipWise</div>
+            <div class="footer-text">
+                Developed with ❤️ by <strong>Team SipWise</strong> | 
+                <a href="#">Aaradhana Ramu</a>, 
+                <a href="#">Shriya Arun Kumar</a>, 
+                <a href="#">Nishmitha Shetty</a>
+            </div>
+            <div class="footer-text">
+                Water Quality Prediction System | AI-Powered Analysis for Sustainable Health
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom floating emojis -->
+    <div class="bottom-emojis">
+        <span>💧</span>
+        <span>🌊</span>
+        <span>💧</span>
+        <span>🔬</span>
+    </div>
 </body>
 </html>

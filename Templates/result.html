@@ -1,27 +1,579 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Water Quality Result</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SipWise - Water Quality Analysis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a1420;
+            color: white;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ===== LEFT SIDEBAR ===== */
+        .sidebar {
+            width: 450px;
+            background: linear-gradient(135deg, #0f2d44 0%, #132f4c 100%);
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .home-link {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .home-link:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        /* Section Label */
+        .section-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            margin-top: 25px;
+        }
+
+        .section-label:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-icon {
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 11px 13px;
+            color: white;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.12);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
+        }
+
+        .range-hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            color: #0a1420;
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Info Cards */
+        .info-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-title {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .info-value {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.5);
+        }
+
+        /* ===== RIGHT PANEL (VISUALIZATION) ===== */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #0a1420 0%, #0f2d44 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Elements */
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .particle-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%); top: 10%; left: 5%; animation-delay: 0s; }
+        .particle-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(0,255,136,0.1) 0%, transparent 70%); bottom: 10%; right: 5%; animation-delay: 2s; }
+        .particle-3 { width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%); top: 50%; left: 50%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Result Display */
+        .visualization {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+        }
+
+        .placeholder-icon {
+            font-size: 100px;
+            margin-bottom: 25px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .placeholder-text {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .placeholder-subtext {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 30px;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.5s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .result-safe {
+            border: 2px solid #00ff88;
+            box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3);
+        }
+
+        .result-unsafe {
+            border: 2px solid #ff006e;
+            box-shadow: 0 20px 60px rgba(255, 0, 110, 0.3);
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .result-title {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .result-safe .result-title { color: #00ff88; }
+        .result-unsafe .result-title { color: #ff006e; }
+
+        .result-message {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .result-safe .result-message { color: #00ff88; }
+        .result-unsafe .result-message { color: #ff006e; }
+
+        .confidence-display {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #00d4ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .main-panel {
+                min-height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                padding: 20px;
+            }
+
+            .main-panel {
+                padding: 30px 20px;
+            }
+
+            .result-title {
+                font-size: 28px;
+            }
+
+            .placeholder-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
 </head>
-<body class="water-bg">
+<body>
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <span class="logo-icon">💧</span>
+                <span class="logo-text">SipWise</span>
+            </div>
+            <a href="/" class="home-link">Home</a>
+        </div>
 
-<header>
-    <h1>SipWIse - Prediction Result</h1>
-</header>
+        <!-- Form -->
+        <form method="POST" id="predictionForm">
+            <!-- Section 1: Basic Parameters -->
+            <div class="section-label">🔬 Basic Parameters</div>
 
-<div class="result-card {{ 'safe' if prediction=='Safe' else 'unsafe' }}">
-    Water Quality: {{ prediction }}
-</div>
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">🔬</span>
+                    pH Level
+                </label>
+                <input type="number" name="ph" step="0.01" placeholder="7.0" min="0" max="14" required>
+                <div class="range-hint">Safe: 6.5-8.5 | Example: 7.04</div>
+            </div>
 
-<div style="text-align:center;">
-    <a href="{{ url_for('index') }}" class="back-btn">Back to Form</a>
-</div>
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">⛏️</span>
+                    Hardness (mg/L)
+                </label>
+                <input type="number" name="hardness" step="0.01" placeholder="200" required>
+                <div class="range-hint">Safe: 150-250 | Example: 204.89</div>
+            </div>
 
-<footer>
-    <p>© 2025 SipWIse | All rights reserved</p>
-</footer>
+            <!-- Section 2: Chemical Composition -->
+            <div class="section-label">🧪 Chemical Composition</div>
 
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">🪨</span>
+                    Total Solids (ppm)
+                </label>
+                <input type="number" name="solids" step="0.01" placeholder="20000" required>
+                <div class="range-hint">Safe: 15k-30k | Example: 20791.32</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">⚛️</span>
+                    Chloramines (ppm)
+                </label>
+                <input type="number" name="chloramines" step="0.01" placeholder="7" required>
+                <div class="range-hint">Safe: 5-10 | Example: 7.30</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">🧪</span>
+                    Sulfate (ppm)
+                </label>
+                <input type="number" name="sulfate" step="0.01" placeholder="350" required>
+                <div class="range-hint">Safe: 250-400 | Example: 368.52</div>
+            </div>
+
+            <!-- Section 3: Advanced Parameters -->
+            <div class="section-label">⚡ Advanced Parameters</div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">⚡</span>
+                    Conductivity (µS/cm)
+                </label>
+                <input type="number" name="conductivity" step="0.01" placeholder="500" required>
+                <div class="range-hint">Safe: 400-600 | Example: 564.31</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">🌿</span>
+                    Organic Carbon (ppm)
+                </label>
+                <input type="number" name="organicCarbon" step="0.01" placeholder="10" required>
+                <div class="range-hint">Safe: 8-15 | Example: 10.38</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">☢️</span>
+                    Trihalomethanes (ppm)
+                </label>
+                <input type="number" name="trihalomethanes" step="0.01" placeholder="80" required>
+                <div class="range-hint">Safe: 60-100 | Example: 86.99</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <span class="form-icon">🌫️</span>
+                    Turbidity (NTU)
+                </label>
+                <input type="number" name="turbidity" step="0.01" placeholder="3" required>
+                <div class="range-hint">Safe: 1-5 | Example: 2.96</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="predict-btn">🔍 Analyze</button>
+                <button type="reset" class="reset-btn">⟲ Reset</button>
+            </div>
+        </form>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="info-title">📊 Model Stats</div>
+            <div class="info-row">
+                <span class="info-label">Algorithm</span>
+                <span class="info-value">SVM</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Accuracy</span>
+                <span class="info-value">68.85%</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Training Data</span>
+                <span class="info-value">3,276</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Parameters</span>
+                <span class="info-value">9</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="main-panel">
+        <!-- Background particles -->
+        <div class="bg-particle particle-1"></div>
+        <div class="bg-particle particle-2"></div>
+        <div class="bg-particle particle-3"></div>
+
+        <!-- Visualization -->
+        <div class="visualization">
+            {% if prediction %}
+                <div class="result-card {% if 'Safe' in prediction %}result-safe{% else %}result-unsafe{% endif %}">
+                    {% if 'Safe' in prediction %}
+                        <div class="result-icon">✅</div>
+                        <div class="result-title">SAFE TO DRINK</div>
+                        <div class="result-message">✨ Water is safe for consumption</div>
+                    {% else %}
+                        <div class="result-icon">⚠️</div>
+                        <div class="result-title">NOT SAFE</div>
+                        <div class="result-message">🚨 Water requires treatment</div>
+                    {% endif %}
+                    {% if confidence %}
+                        <div class="confidence-display">
+                            Confidence: {{ "%.1f"|format(confidence) }}%
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="placeholder-icon">💧</div>
+                <div class="placeholder-text">Water Quality Analysis</div>
+                <div class="placeholder-subtext">Fill in parameters on the left and click "Analyze" to get predictions</div>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>

@@ -2,8 +2,8 @@ from flask import Flask, render_template, request
 import joblib
 import os
 
-# Set template folder
-app = Flask(__name__, template_folder='templates')
+# Set template folder - USE CAPITAL T!
+app = Flask(__name__, template_folder='Templates')
 
 # Load model + scaler
 try:
